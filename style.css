@@ -1,0 +1,20 @@
+#tree-component {
+    max-width: 300px;
+}
+
+.tree-item {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 15px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tree-item.closed .tree-item {
+    display: none;
+}
+
+.tree-item p:hover {
+    background-color: aqua;
+}
+
