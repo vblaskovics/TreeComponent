@@ -16,3 +16,17 @@
 .tree-item p:hover {
     background-color: aqua;
 }
+
+.tree-item p {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tree-item p i {
+    visibility: hidden;
+    margin: 5px;
+}
+
+.tree-item p:hover i {
+    visibility: visible;
+}

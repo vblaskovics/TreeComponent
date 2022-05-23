@@ -1,6 +1,9 @@
 const nodeTemplate = (...args) => `
     <div class='tree-item'>
-        <p>${args[0]} ${args[1]}</p>
+        <p>
+            <span>${args[0]} ${args[1]}</span>
+            <i class="fa-solid fa-trash"></i>
+        </p>
     </div>
 `
 
@@ -20,27 +23,38 @@ let serverData = {
     ]
 }
 
-function createNode(nodeData, elParent) {
-    if ( !nodeData || !nodeData.label ) return
-    const isFolder = Array.isArray(nodeData.items)
-    
-    // Init DOM element
+function createNodeElement(nodeData, elParent){
     let template = document.createElement('template')
+    const isFolder = Array.isArray(nodeData.items)
     const icon = isFolder ? '📂' : '📄'
     template.innerHTML = nodeTemplate(icon, nodeData.label)
     let elNode = elParent.appendChild(template.content.firstElementChild)
-
+    
     // Add click handling
     elNode.addEventListener('click', e => {
         e.stopPropagation()
         e.target.parentNode.classList.toggle('closed')
     })
+    
+    return elNode;
+}
 
+function createSubNodeElements(nodeData, elParent){
+    nodeData.items.forEach( node => {
+        createNode(node, elParent)
+    })
+}
+
+function createNode(nodeData, elParent) {
+    if ( !nodeData || !nodeData.label ) return
+    
+    // Init DOM element
+    let elNode = createNodeElement(nodeData, elParent)
+    
     // Add sub-nodes
+    const isFolder = Array.isArray(nodeData.items)
     if (isFolder) {
-        nodeData.items.forEach( node => {
-            createNode(node, elNode)
-        })
+        createSubNodeElements(nodeData, elNode)
     }
 }
 
