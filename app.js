@@ -2,7 +2,7 @@ const nodeTemplate = (...args) => `
     <div class='tree-item'>
         <p>
             <span>${args[0]} ${args[1]}</span>
-            <i class="fa-solid fa-trash"></i>
+            <a>❎</a>
         </p>
     </div>
 `
@@ -23,34 +23,76 @@ let serverData = {
     ]
 }
 
-function createNodeElement(nodeData, elParent){
+let serverData2 = {
+    label: 'Mappa1',
+    items: [
+        { label: 'Fájl1' },
+        { label: 'Fájl2 ' },
+        {
+            label: 'Mappa2',
+            items: [
+                { label: 'Fájl3 ' },
+            ]
+        },
+        { label: 'Fájl4' }
+    ]
+}
+
+function createNodeElement(nodeData, elParent) {
     let template = document.createElement('template')
     const isFolder = Array.isArray(nodeData.items)
     const icon = isFolder ? '📂' : '📄'
     template.innerHTML = nodeTemplate(icon, nodeData.label)
     let elNode = elParent.appendChild(template.content.firstElementChild)
-    
+
     // Add click handling
     elNode.addEventListener('click', e => {
         e.stopPropagation()
         e.target.parentNode.classList.toggle('closed')
     })
-    
+
+    // Add delete handling
+    elNode.getElementsByTagName('a')[0].addEventListener('click', e => {
+        deleteService(elNode.parentData, nodeData.label)
+    })
+
     return elNode;
 }
 
-function createSubNodeElements(nodeData, elParent){
-    nodeData.items.forEach( node => {
-        createNode(node, elParent)
+
+// Dummy server service
+function deleteService(nodeData, childName) {
+    if (!nodeData || !nodeData.items) return
+    nodeData.items = nodeData.items.filter(item => item.label !== childName)
+    render()
+}
+
+// Dummy server service
+function saveService() {
+    console.log(JSON.stringify(serverData, null, 4))
+}
+
+// Dummy server service
+function updateService() {
+    serverData = serverData2
+    render()
+}
+
+function createSubNodeElements(nodeData, elParent) {
+    nodeData.items.forEach(childNode => {
+        createNode(childNode, nodeData, elParent)
     })
 }
 
-function createNode(nodeData, elParent) {
-    if ( !nodeData || !nodeData.label ) return
-    
+function createNode(nodeData, parentData, elParent) {
+    if (!nodeData || !nodeData.label) return
+
     // Init DOM element
     let elNode = createNodeElement(nodeData, elParent)
     
+    // Dummy solution!!
+    elNode.parentData = parentData
+
     // Add sub-nodes
     const isFolder = Array.isArray(nodeData.items)
     if (isFolder) {
@@ -59,6 +101,10 @@ function createNode(nodeData, elParent) {
 }
 
 const elTree = document.getElementById('tree-component')
-createNode(serverData, elTree)
 
-console.log(serverData)
+function render() {
+    elTree.replaceChildren()
+    createNode(serverData, null, elTree)
+}
+
+render()
