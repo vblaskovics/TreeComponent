@@ -74,7 +74,7 @@ function saveService() {
 
 // Dummy server service
 function updateService() {
-    serverData = serverData2
+    serverData = { ...serverData2 }
     render()
 }
 
@@ -89,7 +89,7 @@ function createNode(nodeData, parentData, elParent) {
 
     // Init DOM element
     let elNode = createNodeElement(nodeData, elParent)
-    
+
     // Dummy solution!!
     elNode.parentData = parentData
 
